@@ -2,8 +2,6 @@
 
 local map = vim.keymap.set
 
--- START OF NVCHAD DEFAULT MAPPINGS
-
 -- movement in insert mode
 map("i", "<C-b>", "<ESC>^i", { desc = "move beginning of line" })
 map("i", "<C-e>", "<End>", { desc = "move end of line" })
@@ -29,6 +27,8 @@ map("n", "<leader>ds", vim.diagnostic.setloclist, { desc = "LSP diagnostic locli
 local tabufline = require "nvchad.tabufline"
 map({ "n", "i" }, "<M-.>", tabufline.next, { desc = "next buffer" })
 map({ "n", "i" }, "<M-,>", tabufline.prev, { desc = "previous buffer" })
+map({ "n", "i" }, "<C-M-l>", "<cmd>tabnext<CR>", { desc = "previous buffer" })
+map({ "n", "i" }, "<C-M-h>", "<cmd>tabprev<CR>", { desc = "previous buffer" })
 map("n", "<M-o>", function()
   tabufline.move_buf(1)
 end, { desc = "buffer move forward" })
@@ -39,6 +39,8 @@ map("n", "<leader>qb", function()
   tabufline.close_buffer()
 end, { desc = "close buffer" })
 map("n", "<leader>qw", "<cmd>close<CR>", { desc = "close window" })
+map("n", "<leader>qa", "<cmd>only<CR>", { desc = "close all other windows" })
+map("n", "<leader>qt", "<cmd>tabclose<CR>", { desc = "close current tab" })
 
 -- Comment
 map("n", "<leader>/", "gcc", { desc = "toggle comment", remap = true })
@@ -76,29 +78,26 @@ end, { desc = "Search in Neovim config files" })
 -- terminal
 map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
 
--- new terminals
-map("n", "<leader>/", function()
-  require("nvchad.term").new { pos = "vsp" }
-end, { desc = "terminal new vertical term" })
-map("n", "<leader>'", function()
-  require("nvchad.term").new { pos = "float" }
-end, { desc = "terminal new floating term" })
+-- toggleterm
+map("n", "<M-/>", "<cmd>ToggleTerm direction=horizontal<CR>", { desc = "terminal new vertical term" })
+map("n", "<M-'>", "<cmd>ToggleTerm direction=float<CR>", { desc = "terminal new floating term" })
 
--- toggleable
-map({ "n", "t" }, "<M-/>", function()
-  require("nvchad.term").toggle { pos = "vsp", id = "vtoggleTerm" }
-end, { desc = "terminal toggleable vertical term" })
-map({ "n", "t" }, "<M-'>", function()
-  require("nvchad.term").toggle { pos = "float", id = "floatTerm" }
-end, { desc = "terminal toggle floating term" })
+-- program runner
+map("n", "<leader>p", function()
+  local ext = vim.fn.expand "%:e"
+
+  if ext == "cpp" then
+    vim.cmd "TermExec cmd='c++ % ; ./a.out' direction=horizontal"
+  elseif ext == "py" then
+    vim.cmd "TermExec cmd='python %' direction=horizontal"
+  end
+end, { desc = "run run run" })
 
 -- whichkey
 map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
 map("n", "<leader>wk", function()
   vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ")
 end, { desc = "whichkey query lookup" })
-
--- END OF NVCHAD DEFAULT MAPPINGS
 
 -- Normal mode mappings
 map("n", ";", ":", { desc = "Enter command mode" })
@@ -165,19 +164,19 @@ map({ "n", "x" }, "<leader>a", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "general format file" })
 
--- running programs
-map("n", "<leader>p", function()
-  local ext = vim.fn.expand "%:e"
-  local run_cmd
-
-  if ext == "cpp" then
-    run_cmd = ":!g++ % -o %:r ; %:r<CR>"
-  elseif ext == "py" then
-    run_cmd = ":!python %<CR>"
-  else
-    print("No run command defined for *." .. ext)
-    return
-  end
-
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(run_cmd, true, false, true), "n", true)
-end, { desc = "run program based on extension" })
+-- Archive
+-- -- new terminals
+-- map("n", "<leader>/", function()
+--   require("nvchad.term").new { pos = "vsp" }
+-- end, { desc = "terminal new vertical term" })
+-- map("n", "<leader>'", function()
+--   require("nvchad.term").new { pos = "float" }
+-- end, { desc = "terminal new floating term" })
+--
+-- -- toggleable
+-- map({ "n", "t" }, "<M-/>", function()
+--   require("nvchad.term").toggle { pos = "vsp", id = "vtoggleTerm" }
+-- end, { desc = "terminal toggleable vertical term" })
+-- map({ "n", "t" }, "<M-'>", function()
+--   require("nvchad.term").toggle { pos = "float", id = "floatTerm" }
+-- end, { desc = "terminal toggle floating term" })
