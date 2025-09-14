@@ -87,9 +87,9 @@ map("n", "<leader>p", function()
   local ext = vim.fn.expand "%:e"
 
   if ext == "cpp" then
-    vim.cmd "TermExec cmd='c++ % ; ./a.out' direction=horizontal"
+    vim.cmd "TermExec cmd='c++ % ; ./a.out' direction=horizontal go_back=0"
   elseif ext == "py" then
-    vim.cmd "TermExec cmd='python %' direction=horizontal"
+    vim.cmd "TermExec cmd='python %' direction=horizontal go_back=0"
   end
 end, { desc = "run run run" })
 
